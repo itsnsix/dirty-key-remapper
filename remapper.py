@@ -42,7 +42,11 @@ for event in in_dev.read_loop():
                 mapped()
             else:
                 for key in mapped.split(', '):
-                    ui.write(e.EV_KEY, evdev.ecodes.ecodes[key], 1)
+                    ui.write(e.EV_KEY, e.ecodes[key], 1)
                 for key in mapped.split(', '):
-                    ui.write(e.EV_KEY, evdev.ecodes.ecodes[key], 0)
+                    ui.write(e.EV_KEY, e.ecodes[key], 0)
                 ui.syn()
+        else:
+            ui.write(e.EV_KEY, e.ecodes[key.keycode], 1)
+            ui.write(e.EV_KEY, e.ecodes[key.keycode], 0)
+            ui.syn()
