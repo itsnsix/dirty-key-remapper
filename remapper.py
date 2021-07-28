@@ -21,8 +21,10 @@ def close():
 
 remap = {
     'KEY_C, KEY_X, KEY_Z, KEY_LEFTSHIFT': close,
-    'KEY_LEFTSHIFT, KEY_Z': 'KEY_RIGHTCTRL, KEY_Z',
-    'KEY_LEFTSHIFT, KEY_X': 'KEY_RIGHTCTRL, KEY_RIGHTSHIFT, KEY_Z'
+    'KEY_LEFTSHIFT, KEY_Z': 'KEY_LEFTCTRL, KEY_Z',
+    'KEY_LEFTSHIFT': 'KEY_LEFTCTRL',
+    'KEY_C': 'KEY_E',
+    'KEY_LEFTSHIFT, KEY_X': 'KEY_LEFTCTRL, KEY_RIGHTSHIFT, KEY_Z'
 }
 
 active_keys = []
@@ -41,6 +43,7 @@ for event in in_dev.read_loop():
 
             for down_key in last_down:
                 ui.write(e.EV_KEY, e.ecodes[down_key], 0)
+            ui.syn()
             last_down = []
 
         elif key.keystate == key.key_down and key.keycode not in active_keys:
@@ -55,8 +58,8 @@ for event in in_dev.read_loop():
                 if callable(mapped):
                     mapped()
                 else:
-                    last_down = last_down + mapped.split(', ')
                     for key in mapped.split(', '):
+                        last_down.append(key)
                         ui.write(e.EV_KEY, e.ecodes[key], 1)
                     ui.syn()
             else:
