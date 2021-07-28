@@ -26,27 +26,44 @@ remap = {
 }
 
 active_keys = []
+last_down = []
 
 for event in in_dev.read_loop():
     if event.type == evdev.ecodes.EV_KEY:
         key = evdev.events.KeyEvent(event)
-        if key.keystate == key.key_up and key.keycode in active_keys:
-            active_keys.pop(active_keys.index(key.keycode))
-            continue
-        elif key.keystate == key.key_down and key.keycode not in active_keys:
-            active_keys.append(key.keycode)
 
-        if ', '.join(active_keys) in remap.keys():
-            mapped = remap[', '.join(active_keys)]
-            if callable(mapped):
-                mapped()
-            else:
-                for key in mapped.split(', '):
-                    ui.write(e.EV_KEY, e.ecodes[key], 1)
-                for key in mapped.split(', '):
-                    ui.write(e.EV_KEY, e.ecodes[key], 0)
-                ui.syn()
-        else:
-            ui.write(e.EV_KEY, e.ecodes[key.keycode], 1)
+        if key.keystate == key.key_up:
             ui.write(e.EV_KEY, e.ecodes[key.keycode], 0)
             ui.syn()
+
+            if key.keycode in active_keys:
+                active_keys.pop(active_keys.index(key.keycode))
+
+            for down_key in last_down:
+                ui.write(e.EV_KEY, e.ecodes[down_key], 0)
+            last_down = []
+
+        elif key.keystate == key.key_down and key.keycode not in active_keys:
+            active_keys.append(key.keycode)
+            if ', '.join(active_keys) in remap.keys():
+
+                for down_key in last_down:
+                    ui.write(e.EV_KEY, e.ecodes[down_key], 0)
+                last_down = []
+
+                mapped = remap[', '.join(active_keys)]
+                if callable(mapped):
+                    mapped()
+                else:
+                    last_down = last_down + mapped.split(', ')
+                    for key in mapped.split(', '):
+                        ui.write(e.EV_KEY, e.ecodes[key], 1)
+                    ui.syn()
+            else:
+                last_down.append(key.keycode)
+                ui.write(e.EV_KEY, e.ecodes[key.keycode], 1)
+                ui.syn()
+        elif key.keystate == key.key_hold:
+            continue
+
+
