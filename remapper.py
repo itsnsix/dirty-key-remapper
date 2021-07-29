@@ -24,6 +24,8 @@ remap = {
     'KEY_LEFTSHIFT, KEY_Z': 'KEY_LEFTCTRL, KEY_Z',
     'KEY_LEFTSHIFT': 'KEY_LEFTCTRL',
     'KEY_C': 'KEY_E',
+    'KEY_SPACE': 'KEY_M',
+    'KEY_CAPSLOCK': "KEY_LEFTSHIFT",
     'KEY_LEFTSHIFT, KEY_X': 'KEY_LEFTCTRL, KEY_RIGHTSHIFT, KEY_Z'
 }
 
@@ -36,14 +38,12 @@ for event in in_dev.read_loop():
 
         if key.keystate == key.key_up:
             ui.write(e.EV_KEY, e.ecodes[key.keycode], 0)
-            ui.syn()
 
             if key.keycode in active_keys:
                 active_keys.pop(active_keys.index(key.keycode))
 
             for down_key in last_down:
                 ui.write(e.EV_KEY, e.ecodes[down_key], 0)
-            ui.syn()
             last_down = []
 
         elif key.keystate == key.key_down and key.keycode not in active_keys:
@@ -61,12 +61,12 @@ for event in in_dev.read_loop():
                     for key in mapped.split(', '):
                         last_down.append(key)
                         ui.write(e.EV_KEY, e.ecodes[key], 1)
-                    ui.syn()
+
             else:
                 last_down.append(key.keycode)
                 ui.write(e.EV_KEY, e.ecodes[key.keycode], 1)
-                ui.syn()
+
         elif key.keystate == key.key_hold:
             continue
 
-
+        ui.syn()
