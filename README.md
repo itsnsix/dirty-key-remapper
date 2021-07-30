@@ -26,4 +26,4 @@ remap = {
 
 Run with `sudo python3 remapper.py`
 
-By default pressing C-X-Z-LSHIFT will execute the close command and terminate the program. You can change this in the remap dict.
+By default pressing C-X-Z-LSHIFT (19-18-17-16 on the Tartarus) will execute the close command and terminate the program. You can change this in the remap dict.
