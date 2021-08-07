@@ -10,10 +10,9 @@ Largely untested. I'll fix bugs as I find them. YMMV
 Install [evdev](https://python-evdev.readthedocs.io/en/latest/index.html): `pip3 install evdev`
 
 
-Choose the input and output device from /dev/inputs/
+Choose the input device from /dev/inputs/
 ```py
 in_dev = evdev.InputDevice('/dev/input/by-id/usb-Razer_Razer_Tartarus_Pro-if01-event-kbd')
-out_dev = evdev.InputDevice('/dev/input/by-id/usb-Microsoft_Natural®_Ergonomic_Keyboard_4000-if01-event-kbd')
 ```
 
 Specify your key remappings in the `remap` dict. Note that order matters. You can map to keys or to functions. 
@@ -27,4 +26,4 @@ remap = {
 
 Run with `sudo python3 remapper.py`
 
-By default pressing C-X-Z-LSHIFT will execute the close command and terminate the program. You can change this in the remap dict.
+By default pressing C-X-Z-LSHIFT (19-18-17-16 on the Tartarus) will execute the close command and terminate the program. You can change this in the remap dict.
